@@ -68,24 +68,12 @@ button:focus-visible{outline:4px solid var(--ink);outline-offset:3px}
 @keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
 
 .cheer{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vh;pointer-events:none;z-index:6}
-/* Running cat (win celebration): a cartoon of Evan's cat, runs around the screen for DANCE_MS */
-.runner{position:fixed;left:0;top:0;width:min(40vw,330px);pointer-events:none;z-index:7;will-change:transform}
+/* Win celebration: a cartoon of YYY riding his bike round the screen until the praise line has been spoken */
+.runner{position:fixed;left:0;top:0;width:min(42vw,300px);pointer-events:none;z-index:7;will-change:transform}
 .runner .flip{transform-origin:50% 50%}
-.runner .headgrp{transform-box:view-box;transform-origin:194px 70px} /* turned back when running left, so the dark side of the face stays on the same side as the real cat */
 .runner svg{width:100%;height:auto;overflow:visible;filter:drop-shadow(0 8px 8px rgba(16,33,58,.25))}
-.runner .gallop{transform-box:view-box;transform-origin:130px 180px;animation:gallop .32s ease-in-out infinite alternate}
-.runner .leg{transform-box:fill-box;transform-origin:50% 8%}
-.runner .lf1{animation:swingA .32s ease-in-out infinite alternate}
-.runner .lf2{animation:swingA .32s ease-in-out infinite alternate;animation-delay:-.08s}
-.runner .lb1{animation:swingB .32s ease-in-out infinite alternate}
-.runner .lb2{animation:swingB .32s ease-in-out infinite alternate;animation-delay:-.08s}
-.runner .tail{transform-box:view-box;transform-origin:70px 104px;animation:wag .32s ease-in-out infinite alternate}
-.runner .ears{transform-box:view-box;transform-origin:194px 70px;animation:perk .64s ease-in-out infinite alternate}
-@keyframes gallop{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-14px) rotate(3deg)}}
-@keyframes swingA{from{transform:rotate(38deg)}to{transform:rotate(-38deg)}}
-@keyframes swingB{from{transform:rotate(-38deg)}to{transform:rotate(38deg)}}
-@keyframes wag{from{transform:rotate(-14deg)}to{transform:rotate(10deg)}}
-@keyframes perk{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
+.runner .bob{transform-box:view-box;transform-origin:130px 200px;animation:bob .36s ease-in-out infinite alternate}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-3px)}}
 .cheer b{font-size:clamp(3rem,12vw,7rem);color:var(--ink);background:var(--next);padding:.15em .5em;border-radius:.35em;
   border:5px solid var(--ink);animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
 @keyframes pop{from{transform:scale(.3);opacity:0}}
@@ -114,11 +102,6 @@ button:focus-visible{outline:4px solid var(--ink);outline-offset:3px}
     <p>Drawing Lines 2</p>
   </div>
   <p class="how">喺右邊，畫一個一模一樣嘅形狀。</p>
-  <div class="levels" role="group" aria-label="Level">
-    <button class="lvl" type="button" data-level="1">第一級<small>一個角</small></button>
-    <button class="lvl" type="button" data-level="2">第二級<small>兩邊唔一樣長</small></button>
-    <button class="lvl" type="button" data-level="3">第三級<small>唔同方向</small></button>
-  </div>
   <button class="start" id="startBtn" type="button">開始</button>
   <button class="ghost" id="testBtn" type="button">試聲 Test sound</button>
   <p class="voice" id="voiceStatus">正在檢查廣東話聲音…</p>
@@ -130,7 +113,7 @@ button:focus-visible{outline:4px solid var(--ink);outline-offset:3px}
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
       按住返回<i></i>
     </button>
-    <span class="tag" id="levelTag"></span>
+    <span class="tag" id="levelTag" hidden></span>
     <button class="listen" id="listenBtn" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg>
       再講一次
@@ -139,38 +122,60 @@ button:focus-visible{outline:4px solid var(--ink);outline-offset:3px}
   <div class="board" id="boardWrap"><canvas id="board" aria-label="畫線板"></canvas></div>
   <div class="cheer" id="cheer" hidden><b>做得好！</b>
     <div class="runner" id="dancer" hidden aria-hidden="true"><div class="flip" id="runFlip">
-      <svg viewBox="0 0 260 200">
-        <g class="gallop">
-          <!-- tail: big, fluffy, cream -->
-          <g class="tail"><path d="M74 104 C48 96 30 70 34 34" fill="none" stroke="#DCCDB8" stroke-width="30" stroke-linecap="round"/><path d="M74 104 C48 96 30 70 34 34" fill="none" stroke="#F1E6D6" stroke-width="26" stroke-linecap="round"/></g>
-          <!-- far legs -->
-          <g class="leg lb2"><rect x="80" y="112" width="18" height="52" rx="9" fill="#E6D8C4"/><ellipse cx="89" cy="164" rx="12" ry="7" fill="#F3ECE2"/></g>
-          <g class="leg lf2"><rect x="150" y="112" width="18" height="52" rx="9" fill="#E6D8C4"/><ellipse cx="159" cy="164" rx="12" ry="7" fill="#F3ECE2"/></g>
-          <!-- body: fluffy cream -->
-          <ellipse cx="122" cy="112" rx="64" ry="34" fill="#FBF6EE" stroke="#DCCDB8" stroke-width="2"/>
-          <ellipse cx="116" cy="94" rx="46" ry="12" fill="#EFE3D1"/>
-          <!-- near legs -->
-          <g class="leg lb1"><rect x="92" y="118" width="20" height="54" rx="10" fill="#F6EEE2" stroke="#DCCDB8" stroke-width="2"/><rect x="94" y="140" width="16" height="18" rx="6" fill="#6B4E3D"/><ellipse cx="102" cy="172" rx="13" ry="7.5" fill="#fff" stroke="#DCCDB8" stroke-width="2"/></g>
-          <g class="leg lf1"><rect x="160" y="118" width="20" height="54" rx="10" fill="#F6EEE2" stroke="#DCCDB8" stroke-width="2"/><ellipse cx="170" cy="172" rx="13" ry="7.5" fill="#fff" stroke="#DCCDB8" stroke-width="2"/></g>
-          <!-- white fluffy chest ruff -->
-          <circle cx="176" cy="110" r="26" fill="#fff" stroke="#E4D8C6" stroke-width="2"/>
-          <!-- head, facing us -->
-          <g id="runHead" class="headgrp"><g class="ears">
-            <path d="M162 66 L164 20 L194 46 Z" fill="#3B2A22"/><path d="M167 58 L168 32 L186 48 Z" fill="#D9A79A"/>
-            <path d="M226 66 L224 20 L194 46 Z" fill="#3B2A22"/><path d="M221 58 L220 32 L202 48 Z" fill="#D9A79A"/>
+      <!-- cartoon of YYY on his bike: grey helmet, white and navy top, navy shorts, white bike with a starry navy fork -->
+      <svg viewBox="0 -50 260 262">
+        <g class="bob">
+          <!-- far leg and arm (behind the bike) -->
+          <g stroke-linecap="round" fill="none">
+            <path id="legF1" stroke="#E2B896" stroke-width="11"/>
+            <path id="sockF" stroke="#E4E7EC" stroke-width="11"/>
+            <path id="shoeF" stroke="#5B6573" stroke-width="11"/>
+            <path id="shortF" stroke="#16223F" stroke-width="15"/>
+            <path d="M136 50 L156 66 L176 80" stroke="#E2B896" stroke-width="9"/>
           </g>
-          <circle cx="194" cy="74" r="38" fill="#FBF4EA" stroke="#DCCDB8" stroke-width="2"/>
-          <ellipse cx="186" cy="52" rx="8" ry="6" fill="#A88C78" opacity=".55"/>
-          <!-- half-dark face: dark on the right of the nose, peach on the left -->
-          <path d="M194 66 Q196 80 196 92 Q197 104 206 106 Q222 104 228 88 Q230 74 218 70 Q204 68 194 66 Z" fill="#4A352B"/>
-          <ellipse cx="186" cy="84" rx="8" ry="10" fill="#F0C59C" opacity=".85"/>
-          <ellipse cx="179" cy="72" rx="7" ry="6" fill="#6E9BD8"/><circle cx="179" cy="72.5" r="3.2" fill="#1E1512"/><circle cx="181" cy="70.5" r="1.6" fill="#fff"/>
-          <ellipse cx="210" cy="72" rx="7" ry="6" fill="#6E9BD8"/><circle cx="210" cy="72.5" r="3.2" fill="#1E1512"/><circle cx="212" cy="70.5" r="1.6" fill="#fff"/>
-          <path d="M189 88 L199 88 L194 94 Z" fill="#1E1512"/>
-          <path d="M194 94 Q190 100 185 98 M194 94 Q198 100 203 98" fill="none" stroke="#1E1512" stroke-width="2" stroke-linecap="round"/>
-          <g stroke="#B8AC9F" stroke-width="1.4" stroke-linecap="round">
-            <path d="M178 92 L148 86"/><path d="M178 95 L148 98"/><path d="M210 92 L240 86"/><path d="M210 95 L240 98"/>
-          </g></g>
+          <!-- wheels: tyre, rim, spokes (spokes turn) -->
+          <g id="wheelR"><circle cx="60" cy="170" r="38" fill="none" stroke="#2B2F36" stroke-width="9"/><circle cx="60" cy="170" r="31" fill="none" stroke="#C9CED6" stroke-width="2.5"/>
+            <g stroke="#C9CED6" stroke-width="1.6"><path d="M60 140V200M30 170H90M39 149L81 191M81 149L39 191"/></g><circle cx="60" cy="170" r="5" fill="#8A929C"/></g>
+          <g id="wheelFr"><circle cx="200" cy="170" r="38" fill="none" stroke="#2B2F36" stroke-width="9"/><circle cx="200" cy="170" r="31" fill="none" stroke="#C9CED6" stroke-width="2.5"/>
+            <g stroke="#C9CED6" stroke-width="1.6"><path d="M200 140V200M170 170H230M179 149L221 191M221 149L179 191"/></g><circle cx="200" cy="170" r="5" fill="#8A929C"/></g>
+          <!-- frame: white tubes with a navy edge -->
+          <g stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <path d="M60 170L122 172L104 100M60 170L106 110M122 172L178 104M106 112L176 100" stroke="#1D2B4F" stroke-width="12"/>
+            <path d="M60 170L122 172L104 100M60 170L106 110M122 172L178 104M106 112L176 100" stroke="#FFFFFF" stroke-width="7"/>
+            <path d="M178 94L200 170" stroke="#1D2B4F" stroke-width="10"/>
+            <path d="M176 88L184 78L170 74" stroke="#22252B" stroke-width="6"/>
+          </g>
+          <g fill="#FFFFFF"><circle cx="184" cy="112" r="2"/><circle cx="189" cy="130" r="2"/><circle cx="194" cy="148" r="2"/></g>
+          <circle cx="122" cy="172" r="12" fill="#5F6670"/>
+          <ellipse cx="100" cy="98" rx="17" ry="5.5" fill="#22252B"/>
+          <!-- body: shorts, then the white top with navy stripes, leaning to the handlebar -->
+          <g transform="translate(103 94) rotate(-58)">
+            <rect x="22" y="-17" width="50" height="34" rx="15" fill="#FFFFFF" stroke="#D5DAE2" stroke-width="2"/>
+            <rect x="58" y="-17" width="5" height="34" fill="#1D2B4F"/><rect x="66" y="-15" width="3" height="30" fill="#1D2B4F"/>
+            <rect x="-10" y="-16" width="38" height="32" rx="12" fill="#1D2B4F"/>
+          </g>
+          <!-- head with helmet, smiling with his mouth open -->
+          <circle cx="148" cy="30" r="5" fill="#EEC3A0"/>
+          <circle cx="156" cy="24" r="25" fill="#F6D2B4"/>
+          <path d="M158 6 Q174 2 181 16 L172 13 L168 17 L162 11 Z" fill="#1E1A18"/>
+          <path d="M127 24 Q127 -12 160 -13 Q190 -12 186 12 L181 15 Q166 2 131 26 Z" fill="#A6AEB8" stroke="#7C8590" stroke-width="2"/>
+          <path d="M141 -3 Q150 -9 160 -9 M166 -8 Q176 -6 180 2 M140 9 Q152 0 166 -1" stroke="#6E7782" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M181 15 L193 12" stroke="#7C8590" stroke-width="4" stroke-linecap="round"/>
+          <path d="M163 20 Q167 15 171 20" stroke="#1E1A18" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+          <circle cx="166" cy="32" r="4.5" fill="#F29C9C" opacity=".55"/>
+          <path d="M178 22 Q183 25 179 28" stroke="#C99A7A" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M166 35 Q172 46 180 33 Z" fill="#8C2F33"/><path d="M167 35 L179 34 L178 37 L168 37 Z" fill="#FFFFFF"/>
+          <!-- near leg and arm -->
+          <g stroke-linecap="round" fill="none">
+            <path id="legN1" stroke="#F6D2B4" stroke-width="12"/>
+            <path id="sockN" stroke="#FFFFFF" stroke-width="12"/>
+            <path id="shoeN" stroke="#6B7685" stroke-width="12"/>
+            <path id="shortN" stroke="#1D2B4F" stroke-width="16"/>
+            <path d="M138 48 L158 64" stroke="#FFFFFF" stroke-width="13"/>
+            <path d="M152 59 L158 64" stroke="#1D2B4F" stroke-width="13"/>
+            <path d="M159 65 L180 82" stroke="#F6D2B4" stroke-width="10"/>
+          </g>
+          <circle cx="181" cy="82" r="6" fill="#F6D2B4"/>
         </g>
       </svg>
     </div></div>
@@ -191,24 +196,25 @@ const COLS=7;            /* squares across the board (8 dots in a row) */
    across / down: smallest and largest length in squares (across at most 3, so the copy fits on the right).
    straight: share of questions that are a straight line (leave out to use STRAIGHT_SHARE). */
 const LEVELS={
-  1:{name:'第一級',note:'一個角',same:false,across:[1,2],down:[2,4],corners:['L','7'],oneShare:0.75,straight:0}, /* always a corner shape; across part 1 square 3 times in 4, else 2 */
-  2:{name:'第二級',note:'兩邊唔一樣長',same:false,across:[1,3],down:[1,5],corners:['L']},
-  3:{name:'第三級',note:'唔同方向',  same:false,across:[1,3],down:[1,5],corners:['L','r','7','J']}
+  /* Only one level (Evan, 2026-10-16): two shapes. A line down across 4 dots (3 squares),
+     with a 1-square line going right at the bottom (L) or at the top (like Γ). */
+  1:{name:'第一級',same:false,across:[1,1],down:[3,3],corners:['L','r'],straight:0}
 };
 const STRAIGHT_SHARE=0.25; /* about 1 question in 4 is a straight line */
 const JUDGE_MS=1500;     /* after he lifts his finger, wait this long for another stroke before checking */
 const SNAP=0.35;         /* how wobbly a stroke may be before it counts as a turn, as a share of one square */
 const SAY_SHAPE='喺右邊，畫一個一模一樣嘅形狀。';
 const SAY_LINE='喺右邊，畫一條一樣長嘅線。';
-const SAY_WIN='旺寶仔，好叻仔，下次李姑娘會讚員翼陽！';
+const SAY_WIN='旺寶仔，做得啱，可以去交通安全城踩單車。';
 const SAY_RETRY='請再試一次。';
 const IDLE_MS=10000;     /* nothing drawn for this long: say the instruction again */
-const DANCE_MS=5000;     /* how long the cat runs after a right answer */
+const DANCE_MS=5000;     /* shortest celebration; the next question waits until the praise line has finished too */
+const RIDE_MS=6000;      /* time for one lap of the bike round the screen */
 const $=id=>document.getElementById(id);
 
 /* ---------- state ---------- */
 let level=1,q=null,prevKey='',strokes=[],stroke=null,pointerId=null,marks=null,locked=false;
-let afterTimer=null,idleTimer=null,judgeTimer=null,wakeLock=null,current='home';
+let winId=0,backupTimer=null,afterTimer=null,idleTimer=null,judgeTimer=null,wakeLock=null,current='home';
 let geo={cell:60,mx:0,my:0,rows:8,w:0,h:0};
 const once=f=>{let done=false;return()=>{if(!done){done=true;f()}}};
 try{const s=+localStorage.getItem('dl2_level');if(LEVELS[s])level=s}catch(_){}
@@ -448,7 +454,7 @@ function judge(){
     if(hM!==hT&&vM!==vT)msg='哎呀，打橫同打直都唔啱長度呀。';
     else if(hM!==hT)msg='哎呀，打橫嗰條線'+(hM>hT?'太長':'太短')+'呀。';
     else if(vM!==vT)msg='哎呀，打直嗰條線'+(vM>vT?'太長':'太短')+'呀。';
-    else msg='哎呀，個形狀唔一樣呀，睇清楚個角喺邊度。';
+    else msg='哎呀，打橫嗰條線位置唔啱，睇清楚佢喺上面定下面。';
     return {msg,marks:guides};
   }
   if(dy<0)return {msg:'哎呀，畫得太高呀，要喺同一行開始。',marks:guides};
@@ -461,7 +467,8 @@ function wrong(msg,m){
   const b=$('boardWrap');b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');
   /* clear his lines when the voice finishes, or after a fallback timer if the speech gets cut off */
   const unlock=once(()=>{if(current!=='play')return;strokes=[];stroke=null;marks=null;setLocked(false);draw();armIdle()});
-  afterTimer=setTimeout(()=>{say(msg+SAY_RETRY,()=>{afterTimer=setTimeout(unlock,600)});afterTimer=setTimeout(unlock,8000)},420);
+  afterTimer=setTimeout(()=>{say(msg+SAY_RETRY,()=>{afterTimer=setTimeout(unlock,600)})},420); /* wait for the whole sentence */
+  clearTimeout(backupTimer);backupTimer=setTimeout(unlock,4000+(msg+SAY_RETRY).length*420); /* backup only, longer than the sentence */
 }
 
 /* ---------- game ---------- */
@@ -472,7 +479,7 @@ function startGame(){
   newRound(true);
 }
 function newRound(first){
-  clearTimeout(afterTimer);clearTimeout(judgeTimer);clearIdle();
+  clearTimeout(backupTimer);clearTimeout(afterTimer);clearTimeout(judgeTimer);clearIdle();
   $('cheer').hidden=true;$('dancer').hidden=true;
   q=makeQuestion();strokes=[];stroke=null;marks=null;pointerId=null;setLocked(false);draw();
   say((first?'開始！':'')+instruction(),armIdle);
@@ -483,9 +490,14 @@ function win(r){
   sfx.win();
   $('cheer').hidden=false;$('dancer').hidden=false;runAround();
   fireworks();
-  /* the next question starts on a fixed timer, so a cut-off praise line can never stop the game */
-  setTimeout(()=>{if(current==='play')say(SAY_WIN)},650);
-  afterTimer=setTimeout(()=>{if(current==='play')newRound()},DANCE_MS+800);
+  /* the next question waits until the praise line has been spoken AND the celebration has run DANCE_MS.
+     say() has its own safety timer, so if the iPad never reports the end of speech the game still carries on. */
+  const id=++winId,until=performance.now()+DANCE_MS;
+  const next=()=>{if(current==='play'&&id===winId)newRound()};
+  afterTimer=setTimeout(()=>{if(current!=='play'||id!==winId)return;
+    say(SAY_WIN,()=>{if(id!==winId)return;afterTimer=setTimeout(next,Math.max(700,until-performance.now()))})},650);
+  /* backup only, for when speech was stopped (e.g. the iPad screen was switched off): longer than any praise line */
+  clearTimeout(backupTimer);backupTimer=setTimeout(next,DANCE_MS+4000+SAY_WIN.length*420);
 }
 function armIdle(){clearIdle();if(current==='play'&&!document.hidden)idleTimer=setTimeout(onIdle,IDLE_MS)}
 function clearIdle(){clearTimeout(idleTimer);idleTimer=null}
@@ -494,7 +506,7 @@ $('listenBtn').onclick=()=>{if(locked)return;clearIdle();say(instruction(),armId
 document.addEventListener('visibilitychange',()=>{if(document.hidden){clearIdle();stopSpeech()}else if(current==='play'&&!locked)armIdle()});
 
 function endGame(){
-  clearTimeout(afterTimer);clearTimeout(judgeTimer);clearIdle();stopSpeech();setLocked(false);
+  winId++;clearTimeout(backupTimer);clearTimeout(afterTimer);clearTimeout(judgeTimer);clearIdle();stopSpeech();setLocked(false);
   if(wakeLock){wakeLock.release().catch(()=>{});wakeLock=null}
   stopFx();$('cheer').hidden=true;$('dancer').hidden=true;
   q=null;strokes=[];stroke=null;marks=null;
@@ -510,32 +522,50 @@ function endGame(){
   b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')endGame()});
 })();
 
-/* ---------- running cat ---------- */
+/* ---------- YYY riding his bike round the screen ---------- */
 let runRaf=0;
 function runAround(){
-  const el=$('dancer'),fl=$('runFlip'),head=$('runHead');
-  const W=el.offsetWidth,H=W*200/260,vw=innerWidth,vh=innerHeight;
-  const cx=vw/2,cy=vh*.5,A=(vw-W)/2*.95,B=vh*.22;
-  /* infinity path: middle, top right, round the right loop to bottom right, back through the middle,
-     top left, round the left loop to bottom left, back to the middle */
-  const at=t=>[cx+A*Math.sin(t),cy-B*Math.sin(2*t)];
+  const el=$('dancer'),fl=$('runFlip');
+  const W=el.offsetWidth,H=W*262/260,vw=innerWidth,vh=innerHeight;
+  const cx=vw/2,cy=vh/2,A=Math.max(0,(vw-W)/2*.92),B=Math.max(0,(vh-H)/2*.9);
+  /* a big loop near the edges of the screen: along the top to the right, down the right side, back along the bottom */
+  const at=t=>[cx+A*Math.cos(t),cy+B*Math.sin(t)];
   const place=(x,y,rot,left)=>{
     el.style.transform='translate('+(x-W/2)+'px,'+(y-H/2)+'px) rotate('+rot+'deg)';
     fl.style.transform=left?'scaleX(-1)':'';
-    head.style.transform=left?'scaleX(-1)':''; /* keep the dark side of her face on the real side */
+  };
+  /* legs: hip to knee to pedal; the pedals go round the crank */
+  const HIP=[104,96],BB=[122,172],CR=16,L1=42,L2=44;
+  const leg=(a,ids)=>{
+    const P=[BB[0]+CR*Math.cos(a),BB[1]+CR*Math.sin(a)];
+    let dx=P[0]-HIP[0],dy=P[1]-HIP[1],d=Math.min(Math.hypot(dx,dy),L1+L2-1);
+    const base=Math.atan2(dy,dx),al=Math.acos((L1*L1+d*d-L2*L2)/(2*L1*d));
+    const K=[HIP[0]+L1*Math.cos(base-al),HIP[1]+L1*Math.sin(base-al)];
+    const S=[K[0]+(P[0]-K[0])*.62,K[1]+(P[1]-K[1])*.62];
+    $(ids[0]).setAttribute('d','M'+HIP+'L'+K+'L'+S);
+    $(ids[1]).setAttribute('d','M'+S+'L'+P);
+    $(ids[2]).setAttribute('d','M'+(P[0]-5)+' '+(P[1]+2)+'L'+(P[0]+12)+' '+(P[1]+3));
+    $(ids[3]).setAttribute('d','M'+HIP+'L'+(HIP[0]+(K[0]-HIP[0])*.45)+' '+(HIP[1]+(K[1]-HIP[1])*.45)); /* shorts leg */
+  };
+  const spin=now=>{
+    const a=now/1000*Math.PI*2*1.4;
+    leg(a,['legN1','sockN','shoeN','shortN']);leg(a+Math.PI,['legF1','sockF','shoeF','shortF']);
+    const w=(now*0.5)%360;
+    $('wheelR').setAttribute('transform','rotate('+w+' 60 170)');
+    $('wheelFr').setAttribute('transform','rotate('+w+' 200 170)');
   };
   cancelAnimationFrame(runRaf);
-  if(reduced){place(cx,cy,0,false);return}
+  if(reduced){spin(0);place(cx,cy,0,false);return}
   const t0=performance.now();let left=false;
   const frame=now=>{
     if(el.hidden)return;
-    const k=Math.min(1,(now-t0)/DANCE_MS),t=k*2*Math.PI;
+    const t=-Math.PI/2+(now-t0)/RIDE_MS*2*Math.PI; /* starts at the top middle, keeps going round until the next question */
     const [x,y]=at(t),[x2,y2]=at(t+.02),dx=x2-x,dy=y2-y;
     if(Math.abs(dx)>.5)left=dx<0;
     let rot=left?-Math.atan2(dy,-dx):Math.atan2(dy,dx);
-    rot=Math.max(-25,Math.min(25,rot*180/Math.PI));
-    place(x,y,k<1?rot:0,k<1?left:false);
-    if(k<1)runRaf=requestAnimationFrame(frame);
+    rot=Math.max(-12,Math.min(12,rot*180/Math.PI));
+    spin(now);place(x,y,rot,left);
+    runRaf=requestAnimationFrame(frame);
   };
   runRaf=requestAnimationFrame(frame);
 }

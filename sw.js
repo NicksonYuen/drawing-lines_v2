@@ -1,6 +1,6 @@
 // Offline cache so the game still opens without internet.
 // The page itself is fetched fresh when online, so updates you push to GitHub show up on the next launch.
-const CACHE = 'drawing-lines-2-v3';
+const CACHE = 'drawing-lines-2-v5';
 const FILES = [
   './',
   './index.html',
